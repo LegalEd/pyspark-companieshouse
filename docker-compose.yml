@@ -45,8 +45,8 @@ services:
         condition: service_healthy
     environment:
       DATABASE_URL: postgresql://spark:spark@postgres:5432/spark
-      CSV_FILE: /data/data.csv      # change to your CSV's filename
-      TABLE_NAME: records
+      CSV_FILE: /data/BasicCompanyDataAsOneFile-2026-10-01.csv      # change to your CSV's filename
+      TABLE_NAME: companies
     # Installs the driver on each run (needs internet), then loads the CSV.
     command: sh -c "pip install --no-cache-dir -q 'psycopg[binary]' && python /app/load_csv.py"
     volumes:

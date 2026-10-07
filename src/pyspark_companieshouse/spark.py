@@ -17,6 +17,12 @@ def main():
     print(f"Connected to Spark {spark.version}")
     df = spark.read.csv('/data/BasicCompanyDataAsOneFile-2026-10-01.csv', header=True, inferSchema=True)
     print(df.show())
+    # total number of companies
+    print(f"Total number of companies: {df.count()}")
+
+    # top 50 companies by number of outstanding mortgages
+    print(df.filter(F.col("CompanyStatus") == "Active").show())
+
 
     spark.stop()
 

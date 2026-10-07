@@ -2,8 +2,8 @@
 
 Configured through environment variables (see docker-compose.yml):
     DATABASE_URL  e.g. postgresql://spark:spark@postgres:5432/spark
-    CSV_FILE      path to the CSV      (default /data/data.csv)
-    TABLE_NAME    table to (re)create  (default records)
+    CSV_FILE      path to the CSV      (default /data/BasicCompanyDataAsOneFile-2026-10-01.csv)
+    TABLE_NAME    table to (re)create  (default companies)
 
 All columns are created as TEXT; cast in SQL or Spark if you need types.
 The table is dropped and rebuilt on each run, so it is safe to re-run.
@@ -16,8 +16,8 @@ import psycopg
 from psycopg import sql
 
 DATABASE_URL = os.environ["DATABASE_URL"]
-CSV_FILE = os.environ.get("CSV_FILE", "/data/data.csv")
-TABLE_NAME = os.environ.get("TABLE_NAME", "records")
+CSV_FILE = os.environ.get("CSV_FILE", "/data/BasicCompanyDataAsOneFile-2026-10-01.csv")
+TABLE_NAME = os.environ.get("TABLE_NAME", "companies")
 
 
 def main():
