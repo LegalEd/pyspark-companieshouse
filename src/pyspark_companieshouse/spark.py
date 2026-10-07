@@ -22,7 +22,7 @@ def main():
     print(f"Total number of companies: {df.count()}")
 
     # top 50 companies by number of outstanding mortgages
-    print(df.filter(df.CompanyStatus == "Active").orderby(F.col("Mortgages.NumMortOutstanding")).limit(50).show())
+    print(df.filter(df.CompanyStatus == "Active").orderBy(F.col("Mortgages.NumMortOutstanding")).limit(50).show())
 
 
     spark.stop()
