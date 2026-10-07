@@ -8,22 +8,46 @@ Setup:
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
-# from pyspark.sql.functions import col
+from pyspark.sql.types import IntegerType, StructType, StructField, StringType
+
 
 SPARK_REMOTE = "sc://localhost:15002"
+
+# schema = StructType([
+#     StructField("CompanyName", StringType(), True),
+#     StructField("CompanyNumber", StringType(), True),
+#     StructField("Mortgages.NumMortCharges", IntegerType(), True),
+#     StructField("Mortgages.NumMortOutstanding", IntegerType(), True),
+#     StructField("Mortgages.NumMortPartSatisfied", IntegerType(), True),
+#     StructField("Mortgages.NumMortSatisfied", IntegerType(), True),
+
+# ])
 
 
 def main():
     spark = SparkSession.builder.remote(SPARK_REMOTE).appName("example").getOrCreate()
     print(f"Connected to Spark {spark.version}")
-    df = spark.read.csv('/data/BasicCompanyDataAsOneFile-2026-10-01.csv', header=True, inferSchema=True)
-    print(df.show())
+    df = (
+        spark.read
+        .option("header", True)
+        .option("inferSchema", True)
+        .csv("/data/BasicCompanyDataAsOneFile-2026-10-01.csv")
+        .withColumn(
+            "Mortgages.NumMortOutstanding",
+            F.col("`Mortgages.NumMortOutstanding`").cast("int"),
+        )
+    )
+    # print(df.show())
     # total number of companies
     print(f"Total number of companies: {df.count()}")
 
     # top 50 companies by number of outstanding mortgages
-    print(df.filter(df.CompanyStatus == "Active").orderBy(F.col("Mortgages.NumMortOutstanding")).limit(50).show())
-
+    df_top_50 = (
+        df.filter(df.CompanyStatus == "Active")
+        .orderBy(F.col("`Mortgages.NumMortOutstanding`").desc())
+        .limit(50)
+    )
+    print(df_top_50.select("CompanyName", "`Mortgages.NumMortOutstanding`").show())
 
     spark.stop()
 
