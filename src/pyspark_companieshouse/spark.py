@@ -8,6 +8,7 @@ Setup:
 
 from pyspark.sql import SparkSession
 from pyspark.sql import functions as F
+# from pyspark.sql.functions import col
 
 SPARK_REMOTE = "sc://localhost:15002"
 
@@ -21,7 +22,7 @@ def main():
     print(f"Total number of companies: {df.count()}")
 
     # top 50 companies by number of outstanding mortgages
-    print(df.filter(F.col("CompanyStatus") == "Active").show())
+    print(df.filter(df.CompanyStatus == "Active").orderby(F.col("Mortgages.NumMortOutstanding")).limit(50).show())
 
 
     spark.stop()
