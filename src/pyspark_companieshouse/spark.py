@@ -15,39 +15,8 @@ SPARK_REMOTE = "sc://localhost:15002"
 def main():
     spark = SparkSession.builder.remote(SPARK_REMOTE).appName("example").getOrCreate()
     print(f"Connected to Spark {spark.version}")
-
-    # Example data
-    data = [
-        ("Alice", "Engineering", 120000),
-        ("Bob", "Engineering", 105000),
-        ("Carla", "Sales", 80000),
-        ("Dmitri", "Sales", 95000),
-        ("Eve", "Marketing", 70000),
-        ("Frank", "Marketing", 72000),
-    ]
-    df = spark.createDataFrame(data, schema=["name", "department", "salary"])
-
-    print("Original data:")
-    df.show()
-
-    # Transformations are lazy and executed on the server
-    summary = (
-        df.filter(F.col("salary") > 71000)
-        .groupBy("department")
-        .agg(
-            F.count("*").alias("employees"),
-            F.round(F.avg("salary"), 2).alias("avg_salary"),
-            F.max("salary").alias("max_salary"),
-        )
-        .orderBy(F.desc("avg_salary"))
-    )
-
-    print("Summary by department (salary > 71000):")
-    summary.show()
-
-    # Bring a (small) result back to the client as a list of Rows
-    for row in summary.collect():
-        print(row.department, row.avg_salary)
+    df = spark.read.csv('/data/BasicCompanyDataAsOneFile-2026-10-01.csv', header=True, inferSchema=True)
+    print(df.show())
 
     spark.stop()
 

@@ -1,16 +1,17 @@
 services:
   spark-connect:
-    image: apache/spark:4.2.0
+    image: apache/spark:4.1.3
     container_name: spark-connect
     # Run the Spark Connect server in the foreground (start-connect-server.sh
     # daemonizes, which would make the container exit immediately).
+    environment:
+      SPARK_NO_DAEMONIZE: "true"
     command: >
-      /opt/spark/bin/spark-submit
-      --class org.apache.spark.sql.connect.service.SparkConnectServer
-      --packages org.apache.spark:spark-connect_2.12:3.5.3
-      --conf spark.jars.ivy=/tmp/.ivy
-      --conf spark.driver.bindAddress=0.0.0.0
-      --master local[*]
+      /opt/spark/sbin/start-connect-server.sh
+  
+    volumes:
+      - ./data:/data
+      - ./output:/output
     ports:
       - "15002:15002"   # Spark Connect (gRPC) - what spark.py connects to
       - "4040:4040"     # Spark UI
