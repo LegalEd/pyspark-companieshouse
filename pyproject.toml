@@ -1,0 +1,22 @@
+[project]
+name = "pyspark-companieshouse"
+version = "0.1.0"
+description = "Using pyspark to process companies house data"
+readme = "README.md"
+authors = [
+    { name = "LegalEd", email = "zazhin@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "requests>=2.34.2",
+    "ruff>=0.16.10",
+    "pyspark[connect]>=4.2.0",
+    "pyarrow>=25.0.1",
+]
+
+[project.scripts]
+pyspark = "pyspark:main"
+
+[build-system]
+requires = ["uv_build>=0.12.5,<0.13.0"]
+build-backend = "uv_build"
