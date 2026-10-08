@@ -26,14 +26,18 @@ def main():
         header = [h.strip() for h in next(csv.reader(f))]
 
     table = sql.Identifier(TABLE_NAME)
-    columns = sql.SQL(", ").join(sql.SQL("{} TEXT").format(sql.Identifier(h)) for h in header)
+    columns = sql.SQL(", ").join(
+        sql.SQL("{} TEXT").format(sql.Identifier(h)) for h in header
+    )
 
     with psycopg.connect(DATABASE_URL) as conn:  # commits on success
         with conn.cursor() as cur:
             cur.execute(sql.SQL("DROP TABLE IF EXISTS {}").format(table))
             cur.execute(sql.SQL("CREATE TABLE {} ({})").format(table, columns))
 
-            copy_stmt = sql.SQL("COPY {} FROM STDIN WITH (FORMAT csv, HEADER true)").format(table)
+            copy_stmt = sql.SQL(
+                "COPY {} FROM STDIN WITH (FORMAT csv, HEADER true)"
+            ).format(table)
             with cur.copy(copy_stmt) as copy, open(CSV_FILE, "rb") as f:
                 while chunk := f.read(64 * 1024):
                     copy.write(chunk)
